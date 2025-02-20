@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  publisher_api_db:
+    container_name: 'publisher_api_db'
+    build:
+      context: .
+      dockerfile: Dockerfile_postgres
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: publisher_api
+      POSTGRES_MULTIPLE_DATABASES: keycloak
+    volumes:
+      - ~/DockerVolumes/publisher-api/vol_postgresql/:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+
+  publisher_api_keycloak:
+    container_name: 'publisher_api_keycloak'
+    image: quay.io/keycloak/keycloak
+    ports:
+      - '8000:8080'
+    environment:
+      KEYCLOAK_ADMIN: root
+      KEYCLOAK_ADMIN_PASSWORD: root
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://publisher_api_db:5432/keycloak
+      KC_DB_USERNAME: root
+      KC_DB_PASSWORD: root
+    command:
+      - start-dev
+      - --import-realm
+    volumes:
+      - ../realm.json:/opt/keycloak/data/import/realm.json
+    depends_on: [publisher_api_db]
+
+  pgadmin4:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_LISTEN_PORT: 1111
+      PGADMIN_DEFAULT_EMAIL: root@root.com
+      PGADMIN_DEFAULT_PASSWORD: root
+    volumes:
+      - ~/DockerVolumes/newscms/news-api/vol_pgadmin4/:/var/lib/pgadmin
+    ports:
+      - 8001:1111
+    depends_on: [news_api_db]
