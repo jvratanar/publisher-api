@@ -1,4 +1,4 @@
-package si.vratanar.publisherapi;
+package si.vratanar.publisherapi.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
