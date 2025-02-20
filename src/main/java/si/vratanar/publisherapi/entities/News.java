@@ -1,6 +1,5 @@
 package si.vratanar.publisherapi.entities;
 
-
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,8 +20,8 @@ import java.util.Set;
 @Entity
 public class News {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_seq")
-    @SequenceGenerator(name = "user_seq", sequenceName = "user_sequence", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "news_seq")
+    @SequenceGenerator(name = "news_seq", sequenceName = "news_sequence", allocationSize = 1)
     private Long newsId;
 
     @NotNull
@@ -38,7 +37,7 @@ public class News {
 
     @NotNull
     @NotBlank
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @CreationTimestamp
@@ -53,4 +52,7 @@ public class News {
     @JoinTable(name = "news_tag", joinColumns = @JoinColumn(name = "news_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     Set<Tag> tags = new HashSet<>();
+
+    @ManyToOne
+    private NewsUser user;
 }
